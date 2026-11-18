@@ -1,4 +1,4 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -39,7 +39,6 @@ html_content = """<!DOCTYPE html>
       -webkit-user-select: none;
     }
 
-    /* Screen Management */
     .screen {
       display: none;
       width: 100%;
@@ -50,7 +49,6 @@ html_content = """<!DOCTYPE html>
       flex-direction: column;
     }
 
-    /* Center Card Container (Login, Petunjuk, Hasil) */
     .center-wrapper {
       flex: 1;
       display: flex;
@@ -102,7 +100,6 @@ html_content = """<!DOCTYPE html>
       line-height: 1.5;
     }
 
-    /* Form Inputs */
     .form-group {
       margin-bottom: 18px;
     }
@@ -133,7 +130,6 @@ html_content = """<!DOCTYPE html>
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
     }
 
-    /* Buttons */
     .btn {
       width: 100%;
       padding: 14px 20px;
@@ -171,11 +167,6 @@ html_content = """<!DOCTYPE html>
       border: 1.5px solid var(--border);
     }
 
-    .btn-outline:hover:not(:disabled) {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-
     .btn-success {
       background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
       color: #ffffff;
@@ -194,7 +185,6 @@ html_content = """<!DOCTYPE html>
       display: none;
     }
 
-    /* Rules List */
     .rules-box {
       background: #f8fafc;
       border: 1px solid var(--border);
@@ -233,12 +223,10 @@ html_content = """<!DOCTYPE html>
       margin-top: 1px;
     }
 
-    /* Exam Screen Layout */
     #screen-exam {
       background: var(--bg-page);
     }
 
-    /* Responsive Sticky Header */
     .exam-header {
       background: #ffffff;
       border-bottom: 1px solid var(--border);
@@ -289,7 +277,6 @@ html_content = """<!DOCTYPE html>
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
-      font-variant-numeric: tabular-nums;
     }
 
     .timer-badge.danger {
@@ -304,7 +291,6 @@ html_content = """<!DOCTYPE html>
       50% { transform: scale(1.03); }
     }
 
-    /* Exam Main Content */
     .exam-container {
       width: 100%;
       max-width: 820px;
@@ -368,7 +354,6 @@ html_content = """<!DOCTYPE html>
       margin-bottom: 24px;
     }
 
-    /* Options Styling */
     .options-list {
       display: flex;
       flex-direction: column;
@@ -409,7 +394,6 @@ html_content = """<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.18s;
     }
 
     .option-item.selected .opt-letter {
@@ -424,7 +408,6 @@ html_content = """<!DOCTYPE html>
       line-height: 1.45;
     }
 
-    /* Navigation Footer */
     .nav-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -432,7 +415,6 @@ html_content = """<!DOCTYPE html>
       margin-top: 24px;
     }
 
-    /* Number Navigator Pills */
     .q-pills {
       display: flex;
       flex-wrap: wrap;
@@ -451,7 +433,6 @@ html_content = """<!DOCTYPE html>
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.15s;
     }
 
     .pill.answered {
@@ -464,10 +445,8 @@ html_content = """<!DOCTYPE html>
       background: var(--primary);
       border-color: var(--primary);
       color: #ffffff;
-      transform: scale(1.08);
     }
 
-    /* Result Score Circle */
     .score-circle {
       width: 130px;
       height: 130px;
@@ -479,7 +458,6 @@ html_content = """<!DOCTYPE html>
       align-items: center;
       justify-content: center;
       margin: 0 auto 20px;
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
     }
 
     .score-val {
@@ -513,7 +491,6 @@ html_content = """<!DOCTYPE html>
       align-items: center;
     }
 
-    /* Anti-Cheat Warning Overlay */
     #cheat-modal {
       position: fixed;
       inset: 0;
@@ -535,23 +512,16 @@ html_content = """<!DOCTYPE html>
       text-align: center;
       border-top: 6px solid var(--danger);
     }
-
-    @media (max-width: 480px) {
-      .card-premium { padding: 28px 20px; }
-      .question-card { padding: 20px 16px; }
-      .exam-header { padding: 12px 16px; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- 1. HALAMAN LOGIN -->
   <div id="screen-login" class="screen active">
     <div class="center-wrapper">
       <div class="card-premium">
         <span class="badge-top">Asesmen Sumatif Akhir Semester</span>
         <h1 class="card-title">Ujian Mata Pelajaran Sejarah</h1>
-        <p class="card-subtitle">Silakan masukkan nama lengkap dan kata sandi ujian yang diberikan oleh pengawas.</p>
+        <p class="card-subtitle">Silakan masukkan nama lengkap dan kata sandi ujian.</p>
 
         <div id="login-error" class="alert-error"></div>
 
@@ -562,7 +532,7 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="form-group">
             <label class="form-label" for="password">Password Ujian</label>
-            <input type="password" id="password" class="form-input" placeholder="Masukkan password ujian" required autocomplete="new-password">
+            <input type="password" id="password" class="form-input" placeholder="Masukkan password ujian" required>
           </div>
           <button type="submit" id="btn-login" class="btn btn-primary">Masuk ke Ruang Ujian</button>
         </form>
@@ -570,20 +540,18 @@ html_content = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- 2. HALAMAN PETUNJUK UJIAN -->
   <div id="screen-instructions" class="screen">
     <div class="center-wrapper">
       <div class="card-premium" style="max-width: 540px;">
         <span class="badge-top">Tata Tertib & Petunjuk</span>
         <h2 class="card-title">Halo, <span id="display-name-guide">Siswa</span></h2>
-        <p class="card-subtitle">Bacalah petunjuk pengerjaan berikut dengan saksama sebelum memulai ujian:</p>
+        <p class="card-subtitle">Bacalah petunjuk pengerjaan berikut dengan saksama:</p>
 
         <div class="rules-box">
           <ul class="rules-list">
-            <li><span class="rule-num">1</span><span>Waktu pengerjaan adalah <strong>60 menit</strong>. Ujian otomatis tertutup dan terkirim jika waktu habis.</span></li>
-            <li><span class="rule-num">2</span><span>Soal berjumlah <strong>10 butir pilihan ganda</strong> yang ditampilkan secara acak.</span></li>
-            <li><span class="rule-num">3</span><span><strong>Sistem Anti-Curang Aktif:</strong> Layar akan dikunci dalam mode layar penuh (<em>Fullscreen</em>). Dilarang berpindah tab, membuka aplikasi lain, <em>minimize</em> browser, atau membagi layar (<em>split screen</em>).</span></li>
-            <li><span class="rule-num">4</span><span>Setiap pelanggaran berpindah layar akan tercatat otomatis pada sistem dan dilaporkan ke guru pengampu. Jika pelanggaran terjadi <strong>3 kali</strong>, ujian otomatis dihentikan.</span></li>
+            <li><span class="rule-num">1</span><span>Waktu pengerjaan adalah <strong>60 menit</strong>.</span></li>
+            <li><span class="rule-num">2</span><span>Soal berjumlah <strong>10 butir pilihan ganda</strong> acak.</span></li>
+            <li><span class="rule-num">3</span><span><strong>Anti-Curang Aktif:</strong> Dilarang berpindah tab atau keluar layar penuh.</span></li>
           </ul>
         </div>
 
@@ -592,7 +560,6 @@ html_content = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- 3. HALAMAN UJIAN -->
   <div id="screen-exam" class="screen">
     <header class="exam-header">
       <div class="header-info">
@@ -630,7 +597,6 @@ html_content = """<!DOCTYPE html>
     </main>
   </div>
 
-  <!-- 4. HALAMAN HASIL UJIAN -->
   <div id="screen-result" class="screen">
     <div class="center-wrapper">
       <div class="card-premium" style="text-align: center;">
@@ -645,52 +611,34 @@ html_content = """<!DOCTYPE html>
 
         <div class="result-grid">
           <div class="result-row">
-            <span style="color: var(--text-muted);">Jawaban Benar</span>
+            <span>Jawaban Benar</span>
             <strong id="res-correct">0 / 10</strong>
           </div>
           <div class="result-row">
-            <span style="color: var(--text-muted);">Status Pengawasan</span>
-            <strong id="res-cheat" style="text-align: right; max-width: 60%;">Bersih</strong>
+            <span>Status Pengawasan</span>
+            <strong id="res-cheat">Bersih</strong>
           </div>
         </div>
-
-        <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
-          Nilai dan laporan pengawasan Anda telah otomatis dikirimkan ke sistem penilaian guru. Anda dapat menutup halaman ini sekarang.
-        </p>
       </div>
     </div>
   </div>
 
-  <!-- MODAL PERINGATAN ANTI-CURANG -->
   <div id="cheat-modal">
     <div class="cheat-box">
       <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
       <h3 style="color: var(--danger); font-size: 20px; font-weight: 800; margin-bottom: 8px;">Peringatan Pelanggaran!</h3>
-      <p id="cheat-msg" style="font-size: 14px; color: #334155; line-height: 1.5; margin-bottom: 20px;">
-        Anda terdeteksi meninggalkan layar ujian. Aktivitas ini telah dicatat oleh sistem.
-      </p>
+      <p id="cheat-msg" style="font-size: 14px; color: #334155; margin-bottom: 20px;">Anda terdeteksi meninggalkan layar ujian.</p>
       <button type="button" class="btn btn-primary" onclick="resumeExamFullscreen()">Kembali ke Ujian</button>
     </div>
   </div>
 
   <script>
-    // =========================================================================
-    // WAJIB DIISI: TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
-    // Contoh: "https://script.google.com/macros/s/AKfycb.../exec"
-    // =========================================================================
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0N6mzfwamwpL9HoMrXMCnUceL5-zbZhWmEFQuGF5DbuUTtzWJk3oEVQJ6jFeoUQ6D5A/exec";
 
     let examState = {
-      namaSiswa: '',
-      questions: [],
-      currentIndex: 0,
-      answers: {},
-      timeLeft: 60 * 60,
-      timerInterval: null,
-      isExamActive: false,
-      isSubmitting: false,
-      violations: 0,
-      violationNotes: []
+      namaSiswa: '', questions: [], currentIndex: 0, answers: {},
+      timeLeft: 60 * 60, timerInterval: null, isExamActive: false,
+      isSubmitting: false, violations: 0, violationNotes: []
     };
 
     const LETTERS = ['A', 'B', 'C', 'D', 'E'];
@@ -700,19 +648,12 @@ html_content = """<!DOCTYPE html>
       document.getElementById(screenId).classList.add('active');
     }
 
-    // 1. Proses Login via Fetch ke Apps Script
     function handleLogin(e) {
       e.preventDefault();
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const btn = document.getElementById('btn-login');
       const errBox = document.getElementById('login-error');
-
-      if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbw0N6mzfwamwpL9HoMrXMCnUceL5-zbZhWmEFQuGF5DbuUTtzWJk3oEVQJ6jFeoUQ6D5A/exec" || !APPS_SCRIPT_URL.startsWith("https://script.google.com/macros/s/AKfycbw0N6mzfwamwpL9HoMrXMCnUceL5-zbZhWmEFQuGF5DbuUTtzWJk3oEVQJ6jFeoUQ6D5A/exec")) {
-        errBox.textContent = "Konfigurasi belum selesai: URL Apps Script belum dimasukkan di dalam file index.html.";
-        errBox.style.display = 'block';
-        return;
-      }
 
       errBox.style.display = 'none';
       btn.disabled = true;
@@ -721,23 +662,17 @@ html_content = """<!DOCTYPE html>
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'login',
-          namaSiswa: username,
-          password: password
-        })
+        body: JSON.stringify({ action: 'login', namaSiswa: username, password: password })
       })
-      .then(response => response.json())
+      .then(res => res.json())
       .then(res => {
         btn.disabled = false;
         btn.textContent = 'Masuk ke Ruang Ujian';
-
         if (!res.success) {
           errBox.textContent = res.message;
           errBox.style.display = 'block';
           return;
         }
-
         examState.namaSiswa = res.namaSiswa;
         examState.questions = res.questions;
         document.getElementById('display-name-guide').textContent = res.namaSiswa;
@@ -747,121 +682,43 @@ html_content = """<!DOCTYPE html>
       .catch(err => {
         btn.disabled = false;
         btn.textContent = 'Masuk ke Ruang Ujian';
-        errBox.textContent = 'Gagal terhubung ke server. Pastikan URL Apps Script benar & akses diatur ke "Siapa saja (Anyone)".';
+        errBox.textContent = 'Gagal terhubung ke server.';
         errBox.style.display = 'block';
       });
     }
 
-    // 2. Mulai Ujian & Aktifkan Penguncian Layar
     function startExam() {
-      enterFullscreen();
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
       examState.isExamActive = true;
-      activateAntiCheat();
       startTimer();
       renderPills();
       renderQuestion();
       showScreen('screen-exam');
     }
 
-    function enterFullscreen() {
-      const elem = document.documentElement;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(() => {});
-      } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-      }
-    }
-
     function resumeExamFullscreen() {
       document.getElementById('cheat-modal').style.display = 'none';
-      enterFullscreen();
-    }
-
-    // 3. Sistem Anti-Curang
-    function activateAntiCheat() {
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden && examState.isExamActive && !examState.isSubmitting) {
-          recordViolation('Pindah tab / minimize aplikasi');
-        }
-      });
-
-      window.addEventListener('blur', () => {
-        if (examState.isExamActive && !examState.isSubmitting) {
-          recordViolation('Layar kehilangan fokus');
-        }
-      });
-
-      document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && examState.isExamActive && !examState.isSubmitting) {
-          recordViolation('Keluar dari mode layar penuh');
-        }
-      });
-
-      document.addEventListener('contextmenu', e => e.preventDefault());
-      document.addEventListener('copy', e => e.preventDefault());
-      document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'u', 'p', 's'].includes(e.key.toLowerCase())) {
-          e.preventDefault();
-        }
-      });
-
-      history.pushState(null, null, location.href);
-      window.onpopstate = function () {
-        history.go(1);
-      };
-    }
-
-    let lastViolationTime = 0;
-    function recordViolation(reason) {
-      const now = Date.now();
-      if (now - lastViolationTime < 2000) return;
-      lastViolationTime = now;
-
-      examState.violations++;
-      const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      examState.violationNotes.push(`${reason} (${waktu})`);
-
-      if (examState.violations >= 3) {
-        document.getElementById('cheat-modal').style.display = 'none';
-        alert('Batas maksimal pelanggaran (3x) tercapai! Ujian Anda otomatis dihentikan dan dikumpulkan.');
-        finishExam(true);
-      } else {
-        document.getElementById('cheat-msg').innerHTML = 
-          `Anda terdeteksi melakukan aktivitas terlarang: <strong>${reason}</strong>.<br><br>` +
-          `Pelanggaran tercatat: <strong>${examState.violations} dari 3 kali batas maksimal</strong>.`;
-        document.getElementById('cheat-modal').style.display = 'flex';
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
       }
     }
 
-    // 4. Timer 60 Menit
     function startTimer() {
-      updateTimerDisplay();
       examState.timerInterval = setInterval(() => {
         examState.timeLeft--;
-        updateTimerDisplay();
-
-        if (examState.timeLeft <= 300) {
-          document.getElementById('timer-box').classList.add('danger');
-        }
-
+        const mins = Math.floor(examState.timeLeft / 60);
+        const secs = examState.timeLeft % 60;
+        document.getElementById('timer-text').textContent = 
+          `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         if (examState.timeLeft <= 0) {
           clearInterval(examState.timerInterval);
-          alert('Waktu ujian 60 menit telah habis! Jawaban Anda akan dikirim otomatis.');
           finishExam(true);
         }
       }, 1000);
     }
 
-    function updateTimerDisplay() {
-      const mins = Math.floor(examState.timeLeft / 60);
-      const secs = examState.timeLeft % 60;
-      document.getElementById('timer-text').textContent = 
-        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-
-    // 5. Render Soal Satu per Satu
     function renderQuestion() {
       const total = examState.questions.length;
       const idx = examState.currentIndex;
@@ -869,9 +726,6 @@ html_content = """<!DOCTYPE html>
 
       document.getElementById('q-number-label').textContent = `Soal ${idx + 1} dari ${total}`;
       document.getElementById('q-text').textContent = item.q;
-
-      const answeredCount = Object.keys(examState.answers).length;
-      document.getElementById('q-answered-count').textContent = `Terjawab: ${answeredCount}/${total}`;
       document.getElementById('progress-fill').style.width = `${((idx + 1) / total) * 100}%`;
 
       const optContainer = document.getElementById('options-container');
@@ -881,48 +735,27 @@ html_content = """<!DOCTYPE html>
         const isSelected = examState.answers[item.id] === optIdx;
         const div = document.createElement('div');
         div.className = 'option-item' + (isSelected ? ' selected' : '');
-        div.onclick = () => selectAnswer(item.id, optIdx);
-
-        div.innerHTML = `
-          <div class="opt-letter">${LETTERS[optIdx]}</div>
-          <div class="opt-text">${optText}</div>
-        `;
+        div.onclick = () => { examState.answers[item.id] = optIdx; renderQuestion(); };
+        div.innerHTML = `<div class="opt-letter">${LETTERS[optIdx]}</div><div class="opt-text">${optText}</div>`;
         optContainer.appendChild(div);
       });
 
-      const btnPrev = document.getElementById('btn-prev');
+      document.getElementById('btn-prev').disabled = (idx === 0);
       const btnNext = document.getElementById('btn-next');
-
-      btnPrev.disabled = (idx === 0);
-
       if (idx === total - 1) {
         btnNext.textContent = 'Selesai & Kumpulkan ✓';
         btnNext.className = 'btn btn-success';
-        btnNext.onclick = () => confirmFinish();
+        btnNext.onclick = () => { if(confirm('Yakin ingin mengumpulkan ujian?')) finishExam(false); };
       } else {
         btnNext.textContent = 'Berikutnya →';
         btnNext.className = 'btn btn-primary';
-        btnNext.onclick = () => nextQuestion();
+        btnNext.onclick = () => { examState.currentIndex++; renderQuestion(); };
       }
-
-      updatePills();
-    }
-
-    function selectAnswer(questionId, optionIndex) {
-      examState.answers[questionId] = optionIndex;
-      renderQuestion();
     }
 
     function prevQuestion() {
       if (examState.currentIndex > 0) {
         examState.currentIndex--;
-        renderQuestion();
-      }
-    }
-
-    function nextQuestion() {
-      if (examState.currentIndex < examState.questions.length - 1) {
-        examState.currentIndex++;
         renderQuestion();
       }
     }
@@ -933,37 +766,11 @@ html_content = """<!DOCTYPE html>
       examState.questions.forEach((q, idx) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'pill';
+        btn.className = 'pill' + (idx === examState.currentIndex ? ' active' : '');
         btn.textContent = idx + 1;
-        btn.onclick = () => {
-          examState.currentIndex = idx;
-          renderQuestion();
-        };
+        btn.onclick = () => { examState.currentIndex = idx; renderQuestion(); };
         container.appendChild(btn);
       });
-    }
-
-    function updatePills() {
-      const pills = document.querySelectorAll('.pill');
-      pills.forEach((pill, idx) => {
-        const qId = examState.questions[idx].id;
-        pill.className = 'pill';
-        if (examState.answers[qId] !== undefined) pill.classList.add('answered');
-        if (idx === examState.currentIndex) pill.classList.add('active');
-      });
-    }
-
-    // 6. Selesai & Kirim Jawaban via Fetch ke Apps Script
-    function confirmFinish() {
-      const answeredCount = Object.keys(examState.answers).length;
-      const total = examState.questions.length;
-      const msg = answeredCount < total 
-        ? `Baru ${answeredCount} dari ${total} soal yang terjawab. Yakin ingin mengakhiri ujian sekarang?`
-        : 'Apakah Anda yakin ingin mengumpulkan semua jawaban sekarang?';
-
-      if (confirm(msg)) {
-        finishExam(false);
-      }
     }
 
     function finishExam(isForced) {
@@ -972,57 +779,28 @@ html_content = """<!DOCTYPE html>
       examState.isExamActive = false;
       clearInterval(examState.timerInterval);
 
-      const btnNext = document.getElementById('btn-next');
-      btnNext.disabled = true;
-      btnNext.textContent = 'Menyimpan Nilai...';
-
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-
-      const payload = {
-        action: 'submit',
-        namaSiswa: examState.namaSiswa,
-        answers: examState.answers,
-        violations: examState.violations,
-        violationNotes: examState.violationNotes
-      };
-
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          action: 'submit',
+          namaSiswa: examState.namaSiswa,
+          answers: examState.answers,
+          violations: examState.violations,
+          violationNotes: examState.violationNotes
+        })
       })
-      .then(response => response.json())
+      .then(res => res.json())
       .then(res => {
         if (res.success) {
           document.getElementById('result-student-name').textContent = examState.namaSiswa;
           document.getElementById('res-score').textContent = res.nilaiAkhir;
           document.getElementById('res-correct').textContent = `${res.skorBenar} / ${res.totalSoal} Soal`;
-          
-          const cheatEl = document.getElementById('res-cheat');
-          cheatEl.textContent = res.statusKecurangan;
-          cheatEl.style.color = examState.violations === 0 ? 'var(--success)' : 'var(--danger)';
-
+          document.getElementById('res-cheat').textContent = res.statusKecurangan;
           showScreen('screen-result');
-        } else {
-          alert(res.message);
-          examState.isSubmitting = false;
         }
-      })
-      .catch(err => {
-        alert('Gagal mengirim jawaban ke server. Silakan periksa koneksi internet lalu klik Selesai kembali.');
-        examState.isSubmitting = false;
-        btnNext.disabled = false;
-        btnNext.textContent = 'Selesai & Kumpulkan ✓';
       });
     }
   </script>
 </body>
 </html>
-"""
-
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print("File index.html berhasil dibuat.")

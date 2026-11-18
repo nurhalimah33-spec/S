@@ -688,20 +688,74 @@
     }
 
     function startExam() {
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      }
+      enterFullscreen();
       examState.isExamActive = true;
+      activateAntiCheat(); // Mengaktifkan pendeteksi curang saat ujian dimulai
       startTimer();
       renderPills();
       renderQuestion();
       showScreen('screen-exam');
     }
 
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(() => {});
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      }
+    }
+
     function resumeExamFullscreen() {
       document.getElementById('cheat-modal').style.display = 'none';
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(() => {});
+      enterFullscreen();
+    }
+
+    // PENGAKTIFAN SISTEM ANTI-CURANG YANG DIPERBAIKI
+    function activateAntiCheat() {
+      // 1. Deteksi pindah tab / minimize aplikasi
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && examState.isExamActive && !examState.isSubmitting) {
+          recordViolation('Pindah tab / minimize aplikasi');
+        }
+      });
+
+      // 2. Deteksi kehilangan fokus layar (split screen / klik luar)
+      window.addEventListener('blur', () => {
+        if (examState.isExamActive && !examState.isSubmitting) {
+          recordViolation('Layar kehilangan fokus / berpindah jendela');
+        }
+      });
+
+      // 3. Blokir klik kanan & shortcut copy-paste
+      document.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('copy', e => e.preventDefault());
+      document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'u', 'p', 's'].includes(e.key.toLowerCase())) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    let lastViolationTime = 0;
+    function recordViolation(reason) {
+      const now = Date.now();
+      if (now - lastViolationTime < 2500) return; // Mencegah pencatatan ganda bersamaan
+      lastViolationTime = now;
+
+      examState.violations++;
+      const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      examState.violationNotes.push(`${reason} (${waktu})`);
+
+      if (examState.violations >= 3) {
+        document.getElementById('cheat-modal').style.display = 'none';
+        alert('Batas maksimal pelanggaran (3x) tercapai! Ujian Anda otomatis dihentikan dan dikumpulkan.');
+        finishExam(true);
+      } else {
+        document.getElementById('cheat-msg').innerHTML = 
+          `Anda terdeteksi melakukan aktivitas terlarang: <strong>${reason}</strong>.<br><br>` +
+          `Pelanggaran tercatat: <strong>${examState.violations} dari 3 kali batas maksimal</strong>.`;
+        document.getElementById('cheat-modal').style.display = 'flex';
       }
     }
 

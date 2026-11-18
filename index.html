@@ -708,7 +708,7 @@ html_content = """<!DOCTYPE html>
       const btn = document.getElementById('btn-login');
       const errBox = document.getElementById('login-error');
 
-      if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbw0N6mzfwamwpL9HoMrXMCnUceL5-zbZhWmEFQuGF5DbuUTtzWJk3oEVQJ6jFeoUQ6D5A/exec" || !APPS_SCRIPT_URL.startsWith("http")) {
+      if (APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbw0N6mzfwamwpL9HoMrXMCnUceL5-zbZhWmEFQuGF5DbuUTtzWJk3oEVQJ6jFeoUQ6D5A/exec" || !APPS_SCRIPT_URL.startsWith("https://script.google.com/macros/s/AKfycbw0N6mzfwamwpL9HoMrXMCnUceL5-zbZhWmEFQuGF5DbuUTtzWJk3oEVQJ6jFeoUQ6D5A/exec")) {
         errBox.textContent = "Konfigurasi belum selesai: URL Apps Script belum dimasukkan di dalam file index.html.";
         errBox.style.display = 'block';
         return;

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_content = """<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -494,9 +494,9 @@
     #cheat-modal {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(6px);
-      z-index: 9999;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
       display: none;
       align-items: center;
       justify-content: center;
@@ -511,6 +511,19 @@
       padding: 30px 24px;
       text-align: center;
       border-top: 6px solid var(--danger);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .cheat-badge {
+      display: inline-block;
+      background: #fef2f2;
+      color: var(--danger);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid #fecaca;
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -532,7 +545,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="password">Password Ujian</label>
-            <input type="password" id="password" class="form-input" placeholder="Masukkan password ujian" required>
+            <input type="password" id="password" class="form-input" placeholder="Masukkan password ujian" required autocomplete="new-password">
           </div>
           <button type="submit" id="btn-login" class="btn btn-primary">Masuk ke Ruang Ujian</button>
         </form>
@@ -549,9 +562,9 @@
 
         <div class="rules-box">
           <ul class="rules-list">
-            <li><span class="rule-num">1</span><span>Waktu pengerjaan adalah <strong>60 menit</strong>.</span></li>
+            <li><span class="rule-num">1</span><span>Waktu pengerjaan adalah <strong>60 menit</strong>. Ujian otomatis terkirim jika waktu habis.</span></li>
             <li><span class="rule-num">2</span><span>Soal berjumlah <strong>10 butir pilihan ganda</strong> acak.</span></li>
-            <li><span class="rule-num">3</span><span><strong>Anti-Curang Aktif:</strong> Dilarang berpindah tab atau keluar layar penuh.</span></li>
+            <li><span class="rule-num">3</span><span><strong>Sistem Anti-Curang Aktif:</strong> Layar akan dikunci penuh. Dilarang pindah tab, keluar fullscreen, split screen, atau membuka aplikasi lain (pelanggaran 3x = ujian otomatis ditutup).</span></li>
           </ul>
         </div>
 
@@ -566,9 +579,12 @@
         <div class="header-subject">ASAS SEJARAH — KELAS X</div>
         <div class="header-student" id="header-student-name">Peserta: -</div>
       </div>
-      <div class="timer-badge" id="timer-box">
-        <span>⏱</span>
-        <span id="timer-text">60:00</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span id="header-violation-badge" style="display:none; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; padding:6px 10px; border-radius:10px; font-size:12px; font-weight:800;">⚠️ 0/3</span>
+        <div class="timer-badge" id="timer-box">
+          <span>⏱</span>
+          <span id="timer-text">60:00</span>
+        </div>
       </div>
     </header>
 
@@ -616,7 +632,7 @@
           </div>
           <div class="result-row">
             <span>Status Pengawasan</span>
-            <strong id="res-cheat">Bersih</strong>
+            <strong id="res-cheat" style="text-align: right; max-width: 60%;">Bersih</strong>
           </div>
         </div>
       </div>
@@ -625,9 +641,10 @@
 
   <div id="cheat-modal">
     <div class="cheat-box">
-      <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
-      <h3 style="color: var(--danger); font-size: 20px; font-weight: 800; margin-bottom: 8px;">Peringatan Pelanggaran!</h3>
-      <p id="cheat-msg" style="font-size: 14px; color: #334155; margin-bottom: 20px;">Anda terdeteksi meninggalkan layar ujian.</p>
+      <div class="cheat-badge">SISTEM PENGAWASAN AKTIF</div>
+      <div style="font-size: 42px; margin-bottom: 8px;">🚨</div>
+      <h3 style="color: var(--danger); font-size: 20px; font-weight: 800; margin-bottom: 10px;">Peringatan Pelanggaran!</h3>
+      <p id="cheat-msg" style="font-size: 14px; color: #334155; line-height: 1.55; margin-bottom: 22px;">Anda terdeteksi meninggalkan layar ujian.</p>
       <button type="button" class="btn btn-primary" onclick="resumeExamFullscreen()">Kembali ke Ujian</button>
     </div>
   </div>
@@ -638,7 +655,9 @@
     let examState = {
       namaSiswa: '', questions: [], currentIndex: 0, answers: {},
       timeLeft: 60 * 60, timerInterval: null, isExamActive: false,
-      isSubmitting: false, violations: 0, violationNotes: []
+      isSubmitting: false, violations: 0, violationNotes: [],
+      antiCheatInitialized: false, lastViolationTime: 0,
+      initialWidth: window.innerWidth, initialHeight: window.innerHeight
     };
 
     const LETTERS = ['A', 'B', 'C', 'D', 'E'];
@@ -690,7 +709,14 @@
     function startExam() {
       enterFullscreen();
       examState.isExamActive = true;
-      activateAntiCheat(); // Mengaktifkan pendeteksi curang saat ujian dimulai
+      examState.initialWidth = window.innerWidth;
+      examState.initialHeight = window.innerHeight;
+      
+      // Jeda 800ms agar transisi fullscreen tidak memicu pelanggaran palsu di awal
+      setTimeout(() => {
+        activateAntiCheat();
+      }, 800);
+
       startTimer();
       renderPills();
       renderQuestion();
@@ -703,58 +729,112 @@
         elem.requestFullscreen().catch(() => {});
       } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
       }
     }
 
     function resumeExamFullscreen() {
       document.getElementById('cheat-modal').style.display = 'none';
       enterFullscreen();
+      // Reset jeda agar klik tombol kembali tidak memicu blur ganda
+      examState.lastViolationTime = Date.now();
     }
 
-    // PENGAKTIFAN SISTEM ANTI-CURANG YANG DIPERBAIKI
+    // SISTEM ANTI-CURANG MULTI-LAYER (HP Android, iPhone, Laptop, Chromebook)
     function activateAntiCheat() {
-      // 1. Deteksi pindah tab / minimize aplikasi
+      if (examState.antiCheatInitialized) return;
+      examState.antiCheatInitialized = true;
+
+      // 1. Deteksi pindah tab, tekan tombol Home HP, atau minimize aplikasi
       document.addEventListener('visibilitychange', () => {
         if (document.hidden && examState.isExamActive && !examState.isSubmitting) {
-          recordViolation('Pindah tab / minimize aplikasi');
+          recordViolation('Pindah tab / membuka aplikasi lain');
         }
       });
 
-      // 2. Deteksi kehilangan fokus layar (split screen / klik luar)
+      // 2. Deteksi jendela kehilangan fokus (klik aplikasi lain, notifikasi melayang, Alt+Tab)
       window.addEventListener('blur', () => {
         if (examState.isExamActive && !examState.isSubmitting) {
-          recordViolation('Layar kehilangan fokus / berpindah jendela');
+          recordViolation('Layar kehilangan fokus / keluar jendela ujian');
         }
       });
 
-      // 3. Blokir klik kanan & shortcut copy-paste
+      // 3. Deteksi keluar dari mode Fullscreen (Esc / swipe keluar fullscreen)
+      document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && examState.isExamActive && !examState.isSubmitting) {
+          recordViolation('Keluar dari mode layar penuh (Fullscreen)');
+        }
+      });
+      document.addEventListener('webkitfullscreenchange', () => {
+        if (!document.webkitFullscreenElement && examState.isExamActive && !examState.isSubmitting) {
+          recordViolation('Keluar dari mode layar penuh (Fullscreen)');
+        }
+      });
+
+      // 4. Deteksi Split Screen / Layar Terbelah di HP & Tablet
+      window.addEventListener('resize', () => {
+        if (!examState.isExamActive || examState.isSubmitting) return;
+        const heightDiff = Math.abs(window.innerHeight - examState.initialHeight);
+        // Jika tinggi layar menyusut drastis (>35%), indikasi split screen / floating app
+        if (window.innerHeight < examState.initialHeight * 0.65 && heightDiff > 180) {
+          recordViolation('Mengaktifkan layar terbelah (Split Screen)');
+        }
+      });
+
+      // 5. Deteksi khusus iOS Safari (pagehide)
+      window.addEventListener('pagehide', () => {
+        if (examState.isExamActive && !examState.isSubmitting) {
+          recordViolation('Meninggalkan halaman browser');
+        }
+      });
+
+      // 6. Blokir klik kanan, copy, cut, inspect element, dan tombol navigasi Back
       document.addEventListener('contextmenu', e => e.preventDefault());
       document.addEventListener('copy', e => e.preventDefault());
+      document.addEventListener('cut', e => e.preventDefault());
       document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'u', 'p', 's'].includes(e.key.toLowerCase())) {
+        if (
+          e.key === 'F12' ||
+          e.key === 'PrintScreen' ||
+          ((e.ctrlKey || e.metaKey) && ['c', 'v', 'x', 'u', 'p', 's', 'a', 'i', 'j'].includes(e.key.toLowerCase()))
+        ) {
           e.preventDefault();
         }
       });
+
+      history.pushState(null, null, location.href);
+      window.onpopstate = function () {
+        history.go(1);
+        if (examState.isExamActive && !examState.isSubmitting) {
+          recordViolation('Menekan tombol kembali (Back)');
+        }
+      };
     }
 
-    let lastViolationTime = 0;
     function recordViolation(reason) {
       const now = Date.now();
-      if (now - lastViolationTime < 2500) return; // Mencegah pencatatan ganda bersamaan
-      lastViolationTime = now;
+      // Jeda 1.5 detik agar event bersamaan (misal blur + visibilitychange) terhitung 1 pelanggaran
+      if (now - examState.lastViolationTime < 1500) return;
+      examState.lastViolationTime = now;
 
       examState.violations++;
       const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       examState.violationNotes.push(`${reason} (${waktu})`);
 
+      // Tampilkan indikator pelanggaran di header
+      const badge = document.getElementById('header-violation-badge');
+      badge.style.display = 'inline-block';
+      badge.textContent = `⚠️ ${examState.violations}/3`;
+
       if (examState.violations >= 3) {
         document.getElementById('cheat-modal').style.display = 'none';
-        alert('Batas maksimal pelanggaran (3x) tercapai! Ujian Anda otomatis dihentikan dan dikumpulkan.');
+        alert('Batas maksimal pelanggaran (3x) tercapai! Ujian Anda otomatis dihentikan dan jawaban dikumpulkan.');
         finishExam(true);
       } else {
         document.getElementById('cheat-msg').innerHTML = 
-          `Anda terdeteksi melakukan aktivitas terlarang: <strong>${reason}</strong>.<br><br>` +
-          `Pelanggaran tercatat: <strong>${examState.violations} dari 3 kali batas maksimal</strong>.`;
+          `Anda terdeteksi melakukan aktivitas terlarang:<br><strong>"${reason}"</strong><br><br>` +
+          `Pelanggaran tercatat: <span style="color:#dc2626; font-weight:800;">${examState.violations} dari 3 kali batas maksimal</span>.`;
         document.getElementById('cheat-modal').style.display = 'flex';
       }
     }
@@ -766,6 +846,9 @@
         const secs = examState.timeLeft % 60;
         document.getElementById('timer-text').textContent = 
           `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (examState.timeLeft <= 300) {
+          document.getElementById('timer-box').classList.add('danger');
+        }
         if (examState.timeLeft <= 0) {
           clearInterval(examState.timerInterval);
           finishExam(true);
@@ -779,6 +862,8 @@
       const item = examState.questions[idx];
 
       document.getElementById('q-number-label').textContent = `Soal ${idx + 1} dari ${total}`;
+      const answeredCount = Object.keys(examState.answers).length;
+      document.getElementById('q-answered-count').textContent = `Terjawab: ${answeredCount}/${total}`;
       document.getElementById('q-text').textContent = item.q;
       document.getElementById('progress-fill').style.width = `${((idx + 1) / total) * 100}%`;
 
@@ -799,12 +884,13 @@
       if (idx === total - 1) {
         btnNext.textContent = 'Selesai & Kumpulkan ✓';
         btnNext.className = 'btn btn-success';
-        btnNext.onclick = () => { if(confirm('Yakin ingin mengumpulkan ujian?')) finishExam(false); };
+        btnNext.onclick = () => { if(confirm('Yakin ingin mengumpulkan ujian sekarang?')) finishExam(false); };
       } else {
         btnNext.textContent = 'Berikutnya →';
         btnNext.className = 'btn btn-primary';
         btnNext.onclick = () => { examState.currentIndex++; renderQuestion(); };
       }
+      updatePills();
     }
 
     function prevQuestion() {
@@ -827,11 +913,25 @@
       });
     }
 
+    function updatePills() {
+      const pills = document.querySelectorAll('.pill');
+      pills.forEach((pill, idx) => {
+        const qId = examState.questions[idx].id;
+        pill.className = 'pill';
+        if (examState.answers[qId] !== undefined) pill.classList.add('answered');
+        if (idx === examState.currentIndex) pill.classList.add('active');
+      });
+    }
+
     function finishExam(isForced) {
       if (examState.isSubmitting) return;
       examState.isSubmitting = true;
       examState.isExamActive = false;
       clearInterval(examState.timerInterval);
+
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
 
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
@@ -850,7 +950,9 @@
           document.getElementById('result-student-name').textContent = examState.namaSiswa;
           document.getElementById('res-score').textContent = res.nilaiAkhir;
           document.getElementById('res-correct').textContent = `${res.skorBenar} / ${res.totalSoal} Soal`;
-          document.getElementById('res-cheat').textContent = res.statusKecurangan;
+          const cheatEl = document.getElementById('res-cheat');
+          cheatEl.textContent = res.statusKecurangan;
+          cheatEl.style.color = examState.violations === 0 ? 'var(--success)' : 'var(--danger)';
           showScreen('screen-result');
         }
       });
@@ -858,3 +960,9 @@
   </script>
 </body>
 </html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("File index.html berhasil dibuat.")
